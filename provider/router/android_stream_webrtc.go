@@ -67,7 +67,11 @@ func NewAndroidWebRTCSession(device *models.DBDevice, streamPort string, streamT
 		ctx:             ctx,
 		cancel:          cancel,
 		iceCandidates:   make([]webrtc.ICECandidateInit, 0),
-		frameChannel:    make(chan AndroidH264Frame, 30), // Buffer 30 frames
+		// Small buffer on purpose: the producer drops frames when it is full,
+		// so a deep buffer trades latency for smoothness (30 frames = up to 1s
+		// of backlog at 30fps before dropping starts). 5 caps the backlog at
+		// ~165ms and keeps remote control responsive.
+		frameChannel:    make(chan AndroidH264Frame, 5),
 	}
 
 	// Create WebRTC configuration
