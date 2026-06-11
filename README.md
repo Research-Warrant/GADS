@@ -102,30 +102,11 @@ The platform architecture consists of two main components:
 
 ## License
 
-This repository is **dual-licensed**:
+All source code in this repository is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0)](https://www.gnu.org/licenses/agpl-3.0.html).
 
-- **Open Source Components** (AGPL-3.0):
-  All source code in this repository, excluding explicitly listed proprietary components, is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0)](https://www.gnu.org/licenses/agpl-3.0.html).
+This fork removes the proprietary `hub-ui` component shipped by the [upstream GADS project](https://github.com/shamanec/GADS). The hub runs headless (REST API + WebSockets only) and is meant to be consumed by a separate frontend.
 
-- **Proprietary Components**:
-  The `hub-ui` directory is licensed under a separate proprietary license. See [`PROPRIETARY-LICENSE.txt`](./PROPRIETARY-LICENSE.txt) for more information.
-
-Please refer to the [`LICENSE-OVERVIEW`](./LICENSE-OVERVIEW.txt) file for a detailed overview.
-
-### Using GADS
-
-GADS, including both open source and obfuscated proprietary components, is freely available for use under the terms specified in the license. Users can utilize all functionalities provided by GADS, including those powered by the proprietary components.
-
-### Important Notes on Proprietary Components
-
-- While the proprietary components are included in the distribution, their source code is not available for viewing, modification, or redistribution.
-- These components are provided in an obfuscated form to protect our intellectual property.
-- Users are granted the right to use these components as part of GADS, but not to decompile, reverse engineer, or attempt to extract the original source code.
-
-### Contributions and Modifications
-
-- Contributions and modifications to the open-source portions of GADS are welcome.
-- Please note that it is not possible to contribute to or modify the proprietary components due to their obfuscated nature.
+Please refer to the [`LICENSE-OVERVIEW`](./LICENSE-OVERVIEW.txt) file for details.
 
 ## 🚀 Getting Started
 
@@ -140,40 +121,15 @@ GADS, including both open source and obfuscated proprietary components, is freel
 
 ### ⚡ Quick Start
 
-#### Option 1: Download the latest binary
-
-1. Go to the [releases page](https://github.com/shamanec/GADS/releases) and download the latest binary for your platform.
-
-#### Option 2: Build from source for non-UI related development
-
-**IMPORTANT** You can freely use the Go code to your ends or provide new features/bug fixes on mainstream project but any changes to the UI should be requested from the core team.
+#### Build from source
 
 ```bash
 # Clone the repository
-git clone https://github.com/shamanec/GADS
+git clone git@github.com:Research-Warrant/orka-backend.git
 
-# Build the application without UI
-cd ../..
+# Build the application (headless, no embedded UI)
+cd orka-backend
 go build .
-```
-
-#### Option 3: Build from source for UI related development
-
-**IMPORTANT** You can freely use the Go code to your ends or provide new features/bug fixes on mainstream project but any changes to the UI should be requested from the core team.
-
-1. Clone the repository
-
-```bash
-git clone https://github.com/shamanec/GADS
-```
-
-2. Download the prebuilt UI files zip from the latest [release](https://github.com/shamanec/GADS/releases)
-3. Unzip the file from step into your GADS folder in a new folder named `hub-ui`, your folder structure should look like `../GADS/hub-ui/build/*`
-4. Build the application
-
-```bash
-cd ../..
-go build -tags ui .
 ```
 
 > **Note**: Optionally before building you can update the docs.go (OpenAPI spec) by running `swag init -g hub/hub.go -o docs`

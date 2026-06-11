@@ -1,4 +1,4 @@
-name: GADS UI CI
+name: GADS CI
 
 on:
   push:
@@ -7,45 +7,18 @@ on:
 
 jobs:
   build_and_release:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
-          token: ${{ secrets.GH_PAT }}
 
       - name: Install Go
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Build UI static files
-        env:
-          CI: false
-        run: |
-          cd hub-ui && npm install && REACT_APP_VERSION=${{ github.ref_name }} npm run build --verbose
-
-      - name: Obfuscate UI build output
-        run: |
-          npm install -g javascript-obfuscator
-          cd hub-ui && javascript-obfuscator ./build --output ./ui-dist \
-            --compact true \
-            --identifier-names-generator mangled \
-            --rename-globals false \
-            --rename-properties false \
-            --simplify true \
-            --string-array true \
-            --transform-object-keys false
-          rm -rf ./build/static/js/*
-          cp -r ./ui-dist/static/js/* ./build/static/js
-          zip -r ../ui-files.zip ./build
 
       - name: Install Swagger Generator
         run: |
@@ -59,19 +32,19 @@ jobs:
         run: |
           go get
           echo "Preparing Windows binary"
-          GOOS=windows GOARCH=amd64 go build -tags ui -ldflags="-X 'main.AppVersion=${{ github.ref_name}} '" -o GADS.exe .
+          GOOS=windows GOARCH=amd64 go build -ldflags="-X 'main.AppVersion=$RELEASE_TAG'" -o GADS.exe .
           zip -j gads-win.zip GADS.exe
           rm GADS.exe
           echo "Preparing macOS amd64 binary"
-          GOOS=darwin GOARCH=amd64 go build -tags ui -ldflags="-X 'main.AppVersion=${{ github.ref_name}} '"  -o GADS .
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'main.AppVersion=$RELEASE_TAG'" -o GADS .
           zip -j gads-mac-amd64.zip GADS
           rm GADS
           echo "Preparing macOS arm64 binary"
-          GOOS=darwin GOARCH=arm64 go build -tags ui -ldflags="-X 'main.AppVersion=${{ github.ref_name}} '"  -o GADS .
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-X 'main.AppVersion=$RELEASE_TAG'" -o GADS .
           zip -j gads-mac-arm64.zip GADS
           rm GADS
           echo "Preparing Linux binary"
-          GOOS=linux GOARCH=amd64 go build -tags ui -ldflags="-X 'main.AppVersion=${{ github.ref_name}} '"  -o GADS .
+          GOOS=linux GOARCH=amd64 go build -ldflags="-X 'main.AppVersion=$RELEASE_TAG'" -o GADS .
           zip -j gads-linux.zip GADS
           rm GADS
 
@@ -79,4 +52,4 @@ jobs:
         with:
           files: '*.zip'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          release-tag: ${{  github.ref_name }}
+          release-tag: ${{ github.ref_name }}

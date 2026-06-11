@@ -1,6 +1,3 @@
-//go:build !ui
-// +build !ui
-
 /*
  * This file is part of GADS.
  *
