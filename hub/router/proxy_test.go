@@ -35,8 +35,10 @@ func TestDeviceProxyHandler(t *testing.T) {
 			Device: models.DBDevice{
 				UDID: udid,
 			},
-			Host:      "localhost:8080",
-			Available: true,
+			Host:                 "localhost:8080",
+			Connected:            true,
+			ProviderState:        "live",
+			LastUpdatedTimestamp: time.Now().UnixMilli(),
 		})
 
 		// Create request
@@ -120,8 +122,10 @@ func TestDeviceProxyHandler(t *testing.T) {
 			Device: models.DBDevice{
 				UDID: udid,
 			},
-			Host:      "localhost:8080",
-			Available: true,
+			Host:                 "localhost:8080",
+			Connected:            true,
+			ProviderState:        "live",
+			LastUpdatedTimestamp: time.Now().UnixMilli(),
 			InUseBy:   "another-user",
 			InUseTS:   currentTime, // Use current time to simulate active session
 		})

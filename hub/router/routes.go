@@ -627,13 +627,7 @@ func AvailableDevicesSSE(c *gin.Context) {
 				continue
 			}
 
-			if d.LastUpdatedTimestamp < (time.Now().UnixMilli()-3000) && d.Connected {
-				d.Available = false
-			} else if d.ProviderState != "live" {
-				d.Available = false
-			} else {
-				d.Available = true
-			}
+			d.RefreshAvailability()
 
 			d.InUse = d.IsLocked()
 

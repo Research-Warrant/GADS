@@ -50,6 +50,20 @@ type LocalHubDevice struct {
 
 // All methods below assume the caller holds device.Mu.
 
+// RefreshAvailability recomputes the Available flag from the device's
+// provider state and the freshness of the last provider update. Call it
+// before reading Available so availability never depends on some other
+// consumer (e.g. the available-devices SSE stream) having refreshed it.
+func (d *LocalHubDevice) RefreshAvailability() {
+	if d.LastUpdatedTimestamp < (time.Now().UnixMilli()-3000) && d.Connected {
+		d.Available = false
+	} else if d.ProviderState != "live" {
+		d.Available = false
+	} else {
+		d.Available = true
+	}
+}
+
 // AcquireLock reserves the device for a user. Returns an error if already locked by another user.
 func (d *LocalHubDevice) AcquireLock(user, tenant, source string) error {
 	if d.IsLockedByOther(user, tenant) {

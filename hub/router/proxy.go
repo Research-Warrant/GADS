@@ -77,10 +77,11 @@ func DeviceProxyHandler(c *gin.Context) {
 		return
 	}
 
-	device.Mu.RLock()
+	device.Mu.Lock()
+	device.RefreshAvailability()
 	isAvailable := device.Available
 	isLockedByOther := device.IsLockedByOther(username, tenant)
-	device.Mu.RUnlock()
+	device.Mu.Unlock()
 
 	if isLockedByOther {
 		c.JSON(http.StatusConflict, gin.H{"error": "This device is already linked to another user with an active session"})
